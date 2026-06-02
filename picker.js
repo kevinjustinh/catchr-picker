@@ -17,9 +17,21 @@
 // because it is restricted by HTTP referrer + API in the GCP console.
 const API_KEY = "AIzaSyBnAiWK6fAYmX2fivYxUlDxTJaDr2bxzLM";
 
+// Only ever redirect back to the Catchr extension's own chromiumapp.org origin.
+// Guards against this public page being abused as an open redirector.
+const ALLOWED_REDIRECT_HOST = "kleffbpannecinoopgebbdhkfpkjhbia.chromiumapp.org";
+
 function getParams() {
   // Fragment looks like "#token=…&view=…"; strip the leading '#'.
   return new URLSearchParams(location.hash.replace(/^#/, ""));
+}
+
+function safeRedirect(redirect) {
+  try {
+    const u = new URL(redirect);
+    if (u.protocol === "https:" && u.hostname === ALLOWED_REDIRECT_HOST) return redirect;
+  } catch (e) { /* fall through */ }
+  return null;
 }
 
 function fail(redirect, message) {
@@ -40,9 +52,9 @@ function buildPicker() {
   const token = p.get("token");
   const view = (p.get("view") || "docs").toLowerCase();
   const appId = p.get("appId");
-  const redirect = p.get("redirect");
+  const redirect = safeRedirect(p.get("redirect"));
 
-  if (!redirect) { fail(null, "Missing redirect."); return; }
+  if (!redirect) { fail(null, "Invalid or missing redirect target."); return; }
   if (!token) { fail(redirect, "Missing OAuth token."); return; }
   if (API_KEY === "__PICKER_API_KEY__") { fail(redirect, "Picker API key not configured."); return; }
 
