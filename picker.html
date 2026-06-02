@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catchr — choose a file</title>
+  <style>
+    html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; background: #fbf7ef; color: #2b2b2b; }
+    .wrap { height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+    .msg { font-size: 14px; opacity: .75; }
+    .err { color: #b00020; max-width: 480px; text-align: center; padding: 0 24px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="msg" id="msg">Loading Google Picker…</div>
+    <div class="err" id="err"></div>
+  </div>
+  <!-- picker.js defines window.onApiLoad before api.js calls it -->
+  <script src="picker.js"></script>
+  <script src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
+</body>
+</html>
